@@ -12,9 +12,9 @@ void red::conexion(char nodo1,char nodo2, unsigned peso)
 void red::ceros(string *clave)
 {
     enrutador nodo;
-    unsigned e=0;
+
     char cla;
-    for(auto i= grafo.begin();i!=grafo.end();i++,e++)
+    for(auto i= grafo.begin();i!=grafo.end();i++)
     {
         cla=i->first;
         *clave=*clave+cla;
@@ -39,8 +39,8 @@ bool red::Larchivo(string  nombre_nodos)
     {
         nombre_nodos="";
         while(getline(text,datos))
-        {
-                char nodo1,nodo2,numero[datos.length()-4];
+        {       unsigned memoria=datos.length()-4;
+                char nodo1,nodo2,numero[memoria];
                 unsigned peso=datos.length();
                 for(unsigned i =4,e=0 ;i<peso;i++,e++)
                 {
@@ -49,6 +49,7 @@ bool red::Larchivo(string  nombre_nodos)
                 nodo1=datos[0];
                 nodo2= datos[2];
                 peso=atoi(numero);
+                if(memoria==1) peso=peso/10;
                 conexion(nodo1,nodo2,peso);
 
         }
@@ -57,6 +58,7 @@ bool red::Larchivo(string  nombre_nodos)
     {
         ar=false;
     }
+    //ceros(&nodosC);
     text.close();
     return ar;
 }
@@ -110,21 +112,149 @@ void red::Lcrear()
 
 }
 
-/*void red::mejorR(char desde,char hasta)
-{
-    llegada[desde]=
+void red::borrar()
+{   bool salida= 1;
+    char eliminar;
+    while(salida)
+    {
+        cout<<"ingresa el nombre del enrutador a borrar"<<endl;
+
+        cin>>eliminar;
+        grafo.erase(eliminar);
+        for(auto i= grafo.begin(); i != grafo.end();i++)
+        {
+
+            if(i->first != eliminar)
+            {
+                enrutador a=i->second;
+                a.eliminacion(eliminar);
+                grafo[i->first]=a;
+            }
 
 
 
-}*/
+        }
+        cout<<"0.parar\n"
+              "1.eliminar nodo\n";
+        cin>>salida;
 
-void red::sacar(char nodo, char inf)
-{
-    enrutador a = grafo[nodo];
-
-
+    }
 
 }
 
+void red::caminoO(char salir, char llegar)
+{
+    bool a=1,esta,comprobar;
+    enrutador caminos;//,caminos1[llegar];
+    unsigned tam=0;
+    unsigned long contenido=0,peso=0;
+    string rutas="",enruta1,llaves,conte;//,enruta2,rutas2="";
+    char sumar;
+    enruta1=salir;
+    //enruta2=llegar;
+    salidaC[enruta1]=peso;
+    //Cllegada[enruta2]=peso;
 
+    while (a)
+    {   Csalida=salidaC;
+        auto i =Csalida.begin();
+        tam=i->second;
+        for(;i!=Csalida.end();i++)
+        {
+            if(tam>=i->second)
+            {
+                rutas=i->first;
+                tam=i->second;
+            }
+        }
+
+          //rutas=caminos pasar
+
+            tam=rutas.length()-1;
+            caminos=grafo[rutas[tam]];
+            llaves=caminos.leer();
+
+
+            if(!comparar(rutas,llaves))
+            {
+                for(unsigned e=llaves.length()-1;e>=0;e--)
+                {
+                    sumar=llaves[e];
+                    caminos.sacar(sumar);
+                    contenido=peso;                    
+
+                    tam=buscar(rutas,sumar,&esta);
+                    buscar(rutas,llegar,&comprobar);
+
+                     if(!esta )
+                    {
+                        contenido=contenido+caminos.sacar(sumar);
+                        conte=rutas+sumar;
+                        salidaC[conte]=contenido;
+                        cout<<conte<<endl;
+                        cout<<contenido<<endl;
+
+                    }
+                    if(e==0) break;
+
+                 }
+            }
+            else if(rutas[tam]==llegar)
+            {   comprobar=true;
+                for(unsigned e=llaves.length()-1;e>=0;e--)
+                {
+                    contenido=peso;
+                    sumar=llaves[e];
+                    tam=buscar(rutas,sumar,&esta);
+                    if(!(rutas[tam]==llegar))
+                    {
+                        comprobar=false;
+                        break;
+                    }
+                }
+            }
+
+            salidaC.erase(rutas);
+
+
+        if(comprobar)
+        {
+            break;
+        }
+    }
+
+}
+
+unsigned buscar(string cadena,char Caracter, bool *salir)
+{
+    unsigned encontrar=0;
+    for(unsigned i=cadena.length()-1;i>=0;i--)
+    {
+        if(cadena[i]==Caracter)
+        {
+            encontrar=i;
+            *salir=1;
+            return encontrar;
+        }
+         if (i==0) break;
+    }
+    *salir=0;
+    return encontrar;
+}
+
+// si salida es negativa sale
+bool comparar(string cadena,string aporte)
+{
+    int tam=aporte.length() ;
+    bool salida=1;
+   for(int i =0; i < tam ;i++)
+   {
+        buscar(cadena,aporte[i],&salida);
+        if(!salida)
+        {
+            break;
+        }
+   }
+    return salida;
+}
 

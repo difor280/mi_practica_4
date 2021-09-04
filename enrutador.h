@@ -24,6 +24,9 @@ public:
     void eliminacion(char);
     void cambio(char , unsigned peso=0);
 
+    string leer();
+    unsigned sacar(char);
+
 };
 
 
